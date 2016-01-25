@@ -1,0 +1,58 @@
+__author__ = 'Sophie'
+
+class Tile:
+    def __init__(self, id, type, image, position):
+        self.id = id
+        self.type = type
+        self.image = image
+        if type == start:
+            self.type = start
+            self.image = pygame.image.load("//.blabla")
+        elif type == end:
+            self.type = end
+            self.image = pygame.image.load("//.blabla")
+        elif type == corner:
+            self.type = corner
+            self.image = pygame.image.load("//.corner")
+            #self.type = corner1
+            #self.image = pygame.image.load("//.corner1")
+            #self.type = corner2
+            #self.image = pygame.image.load("//.corner2")
+            #self.type = corner3
+            #self.image = pygame.image.load("//.corner3")
+            #self.type = corner4
+            #self.image = pygame.image.load("//.coner4")
+        elif type == letter:
+            self.type = letter
+            self.image = pygame.image.load("//.letter)
+            #self.type = letterW
+            #self.image = pygame.image.load("//.Tile1")
+            #self.type = letterS
+            #self.image = pygame.image.load("//.Tile2")
+            #self.type = letterTh
+            #self.image = pygame.image.load("//.Tile3")
+            #self.type = Kans
+            #self.image = pygame.image.load("//.Tile4")
+            #self.type = letterR
+            #self.image = pygame.image.load("//.Tile5")
+            #self.type = Questionmark
+            #self.image = pygame.image.load("//.Tile6")
+            #self.type = letterG
+            #self.image = pygame.image.load("//.Tile7")
+            #self.type = letterTR
+            #self.image = pygame.image.load("//.Tile8")
+
+        for y in range(1,10):
+            for x in range(1,10):
+                if y == 1 or y == 10 or x == 1 or x == 10
+            #Tile("letterW", position(x,y)
+
+class Node:
+    def __init__(self, value, tail):
+        self.value = value
+        self.tail = tail
+        self.IsEmpty = false
+
+class Empty:
+    def __init__(self):
+        self.IsEmpty = true
