@@ -1,0 +1,174 @@
+import pygame
+import sys
+
+pygame.init()
+
+#MENU ZAL HIER WORDEN GELADEN
+class GameMenu():
+    def __init__(self, screen, items, bg_color=(0,0,0), font=None, font_size=30,
+                    font_color=(255, 255, 255)):
+        self.screen = screen
+        self.scr_width = self.screen.get_rect().width
+        self.scr_height = self.screen.get_rect().height
+        self.bg_color = bg_color
+        self.clock = pygame.time.Clock()
+        self.items = items
+        self.font = pygame.font.SysFont(font, font_size)
+        self.font_color = font_color
+        self.items = []
+        for index, item in enumerate(items):
+            label = self.font.render(item, 1, font_color)
+            width = label.get_rect().width
+            height = label.get_rect().height
+            posx = (self.scr_width / 2) - (width / 2)
+            # t_h: total height of text block
+            t_h = len(items) * height
+            posy = (self.scr_height / 2) - (t_h / 2) + (index * height)
+            self.items.append([item, label, (width, height), (posx, posy)])
+
+    #RUN METHODE VOOR MENU
+    def run(self):
+        global event
+        mainloop = True
+        while mainloop:
+            # Limit frame speed to 50 FPS
+            self.clock.tick(50)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    mainloop = False
+                if event.type == pygame.MOUSEBUTTONUP:
+                        clickX, clickY = pygame.mouse.get_pos()
+                        for name,label,(width,height),(posx,posy) in self.items:
+                            if posx <= clickX and posx+width >= clickX and posy <= clickY and posy+height >= clickY:
+                                if name == "Start":
+                                    GameStatus.GAMESTATUS = "STARTGAME"
+                                    print("START")
+                                    return
+                                if name == "Spelregels":
+                                    GameStatus.GAMESTATUS = "INSTRUCTIONS"
+                                    print("Spelregels")
+                                    return
+                                if name == "Quit":
+                                    GameStatus.GAMESTATUS = "QUITGAME"
+                                    print("QUIT")
+                                    return
+            self.screen.fill(self.bg_color)
+            for name, label, (width, height), (posx, posy) in self.items:
+                self.screen.blit(label, (posx, posy))
+            pygame.display.flip()
+
+#HET LEGE SPEL SCHERM HIER
+class GameWindow():
+    def __init__(self, screen, bg_color=(0,0,0), font=None, font_size=30,
+                    font_color=(255, 255, 255)):
+        self.screen = screen
+        self.scr_width = self.screen.get_rect().width
+        self.scr_height = self.screen.get_rect().height
+
+        self.bg_color = bg_color
+        self.clock = pygame.time.Clock()
+
+        self.font = pygame.font.SysFont(font, font_size)
+        self.font_color = font_color
+
+    #RUN METHODE VOOR SPEL ZELF
+    def run(self):
+        mainloop = True
+        while mainloop:
+            # Limit frame speed to 50 FPS
+            self.clock.tick(50)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    mainloop = False
+                if event.type == pygame.MOUSEBUTTONUP:
+                        clickX, clickY = pygame.mouse.get_pos()
+                        posx = self.screen.get_rect().width - 30
+                        posy = 10
+                        width = 20
+                        height =20
+                        if posx <= clickX and posx+width >= clickX and posy <= clickY and posy+height >= clickY:
+                            GameStatus.GAMESTATUS = "START"
+                            print("START")
+                            return
+                    
+
+            # Redraw the background
+            self.screen.fill(self.bg_color)
+            self.screen.blit(self.font.render("X", 1, (255,255,255)), (self.screen.get_rect().width -30, 10))
+            pygame.display.flip()
+
+#HET LEGE SPEL SCHERM HIER
+class Instructions():
+    def __init__(self, screen, items, bg_color=(0,0,0), font=None, font_size=30,
+                    font_color=(255, 255, 255)):
+        self.screen = screen
+        self.scr_width = self.screen.get_rect().width
+        self.scr_height = self.screen.get_rect().height
+        self.bg_color = bg_color
+        self.clock = pygame.time.Clock()
+        self.items = items
+        self.font = pygame.font.SysFont(font, font_size)
+        self.font_color = font_color
+        self.items = []
+        for index, item in enumerate(items):
+            label = self.font.render(item, 1, font_color)
+            width = label.get_rect().width
+            height = label.get_rect().height
+            posx = (self.scr_width / 2) - (width / 2)
+            # t_h: total height of text block
+            t_h = len(items) * height
+            posy = (self.scr_height / 2) - (t_h / 2) + (index * height)
+            self.items.append([item, label, (width, height), (posx, posy)])
+
+    #RUN METHODE VOOR SPEL ZELF
+    def run(self):
+        mainloop = True
+        while mainloop:
+            # Limit frame speed to 50 FPS
+            self.clock.tick(50)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    mainloop = False
+                if event.type == pygame.MOUSEBUTTONUP:
+                        clickX, clickY = pygame.mouse.get_pos()
+                        posx = self.screen.get_rect().width - 30
+                        posy = 10
+                        width = 20
+                        height =20
+                        if posx <= clickX and posx+width >= clickX and posy <= clickY and posy+height >= clickY:
+                            GameStatus.GAMESTATUS = "START"
+                            print("START")
+                            return
+
+            # Redraw the background
+            self.screen.fill(self.bg_color)
+            self.screen.blit(self.font.render("X", 1, (255,255,255)), (self.screen.get_rect().width -30, 10))
+            for name, label, (width, height), (posx, posy) in self.items:
+                self.screen.blit(label, (posx, posy))
+            pygame.display.flip()
+
+#deze statische klasse/variabele zal elke keer bewerkt worden als het spel in een andere fase komt. Dus eerst START dan STARTGAME, dan QUITGAME en dan QUIT.
+#dit bewerken moet uit elke fase van het spel kunnen.
+class GameStatus:
+    GAMESTATUS = "START"
+
+if __name__ == "__main__":
+    screen = pygame.display.set_mode((640, 480), 0, 32)
+    while GameStatus.GAMESTATUS != "QUIT":
+        if(GameStatus.GAMESTATUS == "START"):
+            menu_items = ('Start', 'Spelregels', 'Quit')
+            pygame.display.set_caption('Game Menu')
+            gm = GameMenu(screen, menu_items)
+            gm.run()
+        if(GameStatus.GAMESTATUS == "STARTGAME"):
+            pw = GameWindow(screen)
+            pw.run()
+        if(GameStatus.GAMESTATUS == "INSTRUCTIONS"):
+            instructie_regels = ('Regel 1 bla bla', 'regel 2 bla bla', 'regel 3 bla bla')
+            ins = Instructions(screen, instructie_regels)
+            ins.run()
+        if(GameStatus.GAMESTATUS =="QUITGAME"):
+            GameStatus.GAMESTATUS = "QUIT"
