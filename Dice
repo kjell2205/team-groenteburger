@@ -1,0 +1,9 @@
+import random
+
+def die():
+    print("Press enter to roll: ")
+    a = input()
+    a = random.randrange(1, 6)
+    print(a)
+
+die()
