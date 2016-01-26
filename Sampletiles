@@ -1,0 +1,20 @@
+import pygame
+
+# SAMPLE COLOURLIST 
+# GRAY = (100, 100, 100)
+
+# represents amount of tiles
+CORNERTILE = 6
+OTHERTILES = 7
+
+# shows which pic on which colour tile
+textures = {
+    CORNERTILE: pygame.image.load('Tiles/FightTile.png'),
+    BLANK: pygame.image.load('Tiles/BlackTile.png'),
+}  # Image for the tile
+
+# a list representing our tilemap
+tilemap = [
+    [CORNERTILE, OTHERTILES],
+    [OTHERTILES, CORNERTILE,]
+]  # This is the 11x11 format for the map
