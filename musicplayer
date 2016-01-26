@@ -1,0 +1,3 @@
+def menu_music():
+   pygame.mixer.music.load("Sounds/Efteling - Fata Morgana Muziek (HQ).ogg")
+   pygame.mixer.music.play()
