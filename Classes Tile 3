@@ -1,0 +1,37 @@
+import pygame
+import sys
+import os
+from pygame.locals import *
+
+pygame
+os
+sys
+
+
+pygame.init()
+
+clock = pygame.time.Clock()
+time = clock
+
+size = width, height = 816, 814
+screen = pygame.display.set_mode((width,height))
+offset = 50
+board_size = 10
+pygame.display.set_caption('BAR')
+Board = pygame.image.load("Board.png")
+
+
+#Board logic
+
+def Board(xb,yb):
+    screen.blit(Board(xb,yb))
+
+xb = (width * 0)
+yb = (height * 0)
+
+crashed = False
+
+while not crashed:
+    pygame.display.update()
+    Board(xb,yb)
+    clock.tick(60)
