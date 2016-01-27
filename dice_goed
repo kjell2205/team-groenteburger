@@ -1,12 +1,79 @@
 import pygame, random, time
 pygame.init()
 
+class dice:
+    def __init__(self,size,spotsize,midpoint,lts,rbs,roling,diecol1,spotcol1):
+        self.Size = size
+        self.Spotsize = spotsize
+        self.Midpoint = midpoint
+        self.Lts = lts
+        self.Rbs = rbs
+        self.Roling = roling
+        self.Diecol1 = diecol1
+        self.Spotcol1 = spotcol1
+
 size = 256                      # Size of window/dice
 spsz = size//10                 # size of spots
 m = int(size/2)                 # mid-point of dice (or die?)
 l=t=int(size/4)                 # location of left and top spots
 r=b=size-l                      # location of right and bottom spots
-rolling = 2                     # times that dice rolls before stopping
+rolling = 1                      # times that dice rolls before stopping
+diecol = (255,0,0)              # die colour
+diecol1 =(0,0,255)
+spotcol = (255,255,255)         # spot colour
+
+
+def __init__(self,size,spotsize,midpoint,lts,rbs,roling,diecol1,spotcol2):
+    self.Size1 = size
+    self.Spotsize1 = spotsize
+    self.Midpoint1 = midpoint
+    self.Lts1 = lts
+    self.Rbs = rbs
+    self.Roling = roling
+    self.Diecol1 = diecol1
+    self.Spotcol2 = spotcol2
+
+
+diecol1 =(0,0,255)
+spotcol = (255,255,255)
+
+d = pygame.display.set_mode((size, size))
+d.fill(diecol)
+d.fill(diecol1)
+pygame.display.set_caption("Dice Simulator")
+
+
+for i in range(rolling):                    # roll the die...
+        n=random.randint(1,6)                   # random number between 1 & 6
+        d.fill(diecol)
+        d.fill(diecol1)                         # clear previous spots
+if n % 2 == 1:
+        pygame.draw.circle(d,spotcol,(m,m),spsz)  # middle spot
+if n==2 or n==3 or n==4 or n==5 or n==6:
+        pygame.draw.circle(d,spotcol,(l,b),spsz)  # left bottom
+        pygame.draw.circle(d,spotcol,(r,t),spsz)  # right top
+if n==4 or n==5 or n==6:
+        pygame.draw.circle(d,spotcol,(l,t),spsz)  # left top
+        pygame.draw.circle(d,spotcol,(r,b),spsz)  # right bottom
+if n==6:
+        pygame.draw.circle(d,spotcol,(m,b),spsz)  # middle bottom
+        pygame.draw.circle(d,spotcol,(m,t),spsz)  # middle top
+
+
+class sum():
+
+    pygame.display.flip()
+time.sleep(2)
+
+
+
+
+size = 256                      # Size of window/dice
+spsz = size//10                 # size of spots
+m = int(size/2)                 # mid-point of dice (or die?)
+l=t=int(size/4)                 # location of left and top spots
+r=b=size-l                      # location of right and bottom spots
+rolling = 1                      # times that dice rolls before stopping
 diecol = (255,0,0)              # die colour
 spotcol = (255,255,255)         # spot colour
 
@@ -14,7 +81,7 @@ d = pygame.display.set_mode((size, size))
 d.fill(diecol)
 pygame.display.set_caption("Dice Simulator")
 
-for i in range(rolling):            # roll the die...
+for i in range(rolling):                    # roll the die...
     n=random.randint(1,6)                   # random number between 1 & 6
     d.fill(diecol)                          # clear previous spots
     if n % 2 == 1:
@@ -30,4 +97,4 @@ for i in range(rolling):            # roll the die...
         pygame.draw.circle(d,spotcol,(m,t),spsz)  # middle top
 
     pygame.display.flip()
-    time.sleep(1)
+    time.sleep(2)
