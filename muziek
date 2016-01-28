@@ -1,0 +1,2 @@
+pygame.mixer.music.load('Spongebob Sweet Victory Original Video.mp3')
+pygame.mixer.music.play(100)
