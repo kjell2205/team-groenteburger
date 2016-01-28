@@ -1,0 +1,32 @@
+class Player:
+    def __init__(self, id, geld, kleur, rides, positie, kaarten):
+        self.ID = id
+        self.Geld = geld
+        self.kleur = kleur
+        self.Rides = rides
+        self.positie = positie
+        self.kaarten = kaarten
+
+    def UpdateGeld(self, newAmmount):
+        self.Geld = newAmmount
+    def UpdateRides(self, newRides):
+        self.Rides = newRides
+    def UpdatePositie(self, newPostitie):
+        self.positie = newPostitie
+    def UpdateKaarten(self, newKaarten):
+        self.kaarten = newKaarten
+
+# Get Players klasse geeft je een array (lijst) spelers terug. Elke speler krijgt een random kleur toegewezen.
+# GetPlayers(4) geeft je 4 spelers terug in een array (lijst)
+# LET OP: sla de spelers op in staticstate > PlayerObj...
+class GetPlayers:
+    def GetByCount(self, _count):
+        count = int(_count)
+        colorList = ['#0000FF', '#008000', '#FF0000', '#FFFF00']
+        playerList = []
+        if count < 5: # meer dan 4 spelers return lege lijst, minder dan 5 doe dan spelers maken
+            count -= 1  # python telt vanaf 0 dus 4 is 3 want 0,1,2,3 = 4 spelers
+            for i in range(0,count):
+                playerList.append(Player(i, 10.000, colorList[i], 0, 0.0, 0))
+        return playerList
+
