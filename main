@@ -1,0 +1,37 @@
+# main klasse. deze draait zolang het programma loopt.
+# deze klasse houd de "STATE" bij van het programma en triggered indien nodig een nieuwe gamestate
+# bijvoorbeeld van menu naar kiezen van spelers en dan naar het spel zelf.
+import sys
+import pygame
+import gamestate.board
+import gamestate.menu
+import gamestate.instructions
+import gamestate.chooseplayers
+import staticstate
+pygame.init()
+
+if __name__ == "__main__":
+    screen = pygame.display.set_mode((640, 480), 0, 32)# < GEBRUIK DIT VOOR NIET FULLSCREEN
+    #screen = pygame.display.set_mode((1024,768),pygame.FULLSCREEN) # < GEBRUIK DEZE VOOR FULLSCREEN
+    while staticstate.GameStatus.GAMESTATUS != staticstate.GameStates.QUIT:
+
+        if staticstate.GameStatus.GAMESTATUS == staticstate.GameStates.START:
+            menu_items = ('Start', 'Spelregels', 'Quit')
+            pygame.display.set_caption('Game Menu')
+            gm = gamestate.menu.GameMenu(screen, menu_items)
+            gm.run()
+
+        if staticstate.GameStatus.GAMESTATUS == staticstate.GameStates.CHSPLAYERS:
+            pw = gamestate.chooseplayers.ChoosePlayers(screen)
+            pw.run()
+
+        if staticstate.GameStatus.GAMESTATUS == staticstate.GameStates.BOARD:
+            bd = gamestate.board.Board(screen, staticstate.GameStatus._PlayerObj);
+            bd.run()
+        if staticstate.GameStatus.GAMESTATUS == staticstate.GameStates.INSTRUCTIONS:
+            instructie_regels = ('Regel 1 bla bla', 'regel 2 bla bla', 'regel 3 bla bla')
+            ins = gamestate.instructions.Instructions(screen, instructie_regels)
+            ins.run()
+
+        if staticstate.GameStatus.GAMESTATUS == staticstate.GameStates.QUIT:
+            staticstate.GameStatus.GAMESTATUS = staticstate.GameStates.QUIT
