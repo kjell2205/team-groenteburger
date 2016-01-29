@@ -1,0 +1,86 @@
+#in dit scherm kies je de hoeveelheid spelers
+import pygame
+import staticstate
+import assets.player
+
+class ChoosePlayers():
+    playercountbuttonpos = []
+    playerslist = []
+    selectedplayercount = 0
+
+    def __init__(self, screen, bg_color=(0,0,0), font=None, font_size=30,
+                    font_color=(255, 255, 255)):
+
+        self.screen = screen
+        self.scr_width = self.screen.get_rect().width
+        self.scr_height = self.screen.get_rect().height
+        self.bg_color = bg_color
+        self.clock = pygame.time.Clock()
+        self.font = pygame.font.SysFont(font, font_size)
+        self.font_color = font_color
+
+    def run(self):
+
+        mainloop = True
+        while mainloop:
+            # Limit frame speed to 50 FPS
+            self.clock.tick(50)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    mainloop = False
+                if event.type == pygame.MOUSEBUTTONUP:
+                        clickX, clickY = pygame.mouse.get_pos()
+                        posx = self.screen.get_rect().width - 30
+                        posy = 10
+                        width = 20
+                        height =20
+                        if posx <= clickX and posx+width >= clickX and posy <= clickY and posy+height >= clickY:
+                            staticstate.GameStatus.GAMESTATUS = staticstate.GameStates.START
+                            print("START")
+                            ChoosePlayers.selectedplayercount = 0
+                            ChoosePlayers.playerslist = []
+                            return
+
+                        if len(ChoosePlayers.playercountbuttonpos) > 0:
+                            for count, (posx,posy) in self.playercountbuttonpos:
+                                 if posx <= clickX and posx+width >= clickX and posy <= clickY and posy+height >= clickY:
+                                    print("Player  Count: "+ count)
+                                    ChoosePlayers.selectedplayercount = count
+                                    return
+
+            # Redraw the background
+            self.screen.fill(self.bg_color)
+
+            if ChoosePlayers.selectedplayercount is None:
+                ChoosePlayers.selectedplayercount = 0
+            if int(ChoosePlayers.selectedplayercount) == 0:
+                #GEEN SPELERS AANTAL GESELECTEERD, OPEN KIES SPELERS MENUTJE
+                #fix een labeltje
+                self.screen.blit(
+                    self.font.render(
+                        "Kies aantal spelers:",
+                        1,
+                        (255, 255, 255)),
+                    ((self.screen.get_rect().width/10)*4, self.screen.get_rect().height/2))
+                #maak vier knoppen
+                for i in range(2,5):
+                    calcX =(self.screen.get_rect().width/10)*(i*1.8)
+                    calcY = (self.screen.get_rect().height/2)+40
+                    ChoosePlayers.playercountbuttonpos.append((str(i), (calcX, calcY)))
+                    self.screen.blit(
+                        self.font.render(
+                            str(i)+"",
+                            1,
+                            (255, 255, 255)),
+                            (calcX, calcY))
+            else:
+                ChoosePlayers.playerslist = assets.player.GetPlayers().GetByCount(ChoosePlayers.selectedplayercount)
+                staticstate.GameStatus._PlayerCount = ChoosePlayers.selectedplayercount
+                staticstate.GameStatus._PlayerObj = ChoosePlayers.playerslist
+                staticstate.GameStatus.GAMESTATUS = staticstate.GameStates.BOARD
+                return
+
+            #fix sluit knop als laatste
+            self.screen.blit(self.font.render("X", 1, (255, 255, 255)), (self.screen.get_rect().width - 30, 10))
+            pygame.display.flip()
