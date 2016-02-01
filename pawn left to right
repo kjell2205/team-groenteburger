@@ -1,0 +1,28 @@
+ if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_UP:
+                    y_change = -5
+                if event.key == pygame.K_DOWN:
+                    y_change = 5
+
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_UP or event.key == pygame.K_DOWN:
+                    y_change = 0
+
+        x += x_change
+        y += y_change
+
+        gameDisplay.fill(white)
+        pawn(x,y)
+
+        if x > display_width - pawn_width or x < 0:
+            if y > display_height - pawn_height or x <0:
+                gameExit = True
+
+        pygame.display.update()
+        clock.tick(60)
+
+
+
+game_loop()
+pygame.quit()
+quit()
