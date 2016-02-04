@@ -1,0 +1,33 @@
+            # Redraw the background
+            self.screen.fill(self.bg_color)
+
+            if ChoosePlayers.selectedplayercount is None:
+                ChoosePlayers.selectedplayercount = 0
+            if int(ChoosePlayers.selectedplayercount) == 0:
+                #GEEN SPELERS AANTAL GESELECTEERD, OPEN KIES SPELERS MENUTJE
+                #fix een labeltje
+                self.screen.blit(
+                    self.font.render(
+                        "Kies aantal spelers:",
+                        1,
+                        (255, 255, 255)),
+                    ((self.screen.get_rect().width/10)*4, self.screen.get_rect().height/2))
+                #maak vier knoppen
+                for i in range(2,5):
+                    calcX =(self.screen.get_rect().width/10)*(i*1.8)
+                    calcY = (self.screen.get_rect().height/2)+40
+                    ChoosePlayers.playercountbuttonpos.append((str(i), (calcX, calcY)))
+                    self.screen.blit(
+                        self.font.render(
+                            str(i)+"",
+                            1,
+                            (255, 255, 255)),
+                            (calcX, calcY))
+            else:
+                ChoosePlayers.playerslist = assets.player.GetPlayers().GetByCount(ChoosePlayers.selectedplayercount)
+                staticstate.GameStatus.PlayerCount = ChoosePlayers.selectedplayercount
+                staticstate.GameStatus.PlayerObj = ChoosePlayers.playerslist
+                staticstate.GameStatus.GAMESTATUS = staticstate.GameStates.BOARD
+                ChoosePlayers.playerslist = []
+                ChoosePlayers.selectedplayercount = 0
+                return
