@@ -1,0 +1,6 @@
+            # Redraw the background
+            self.screen.fill(self.bg_color)
+            self.screen.blit(self.font.render("X", 1, (255,255,255)), (self.screen.get_rect().width -30, 10))
+            for name, label, (width, height), (posx, posy) in self.items:
+                self.screen.blit(label, (posx, posy))
+            pygame.display.flip()
