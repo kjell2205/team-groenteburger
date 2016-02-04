@@ -1,0 +1,16 @@
+class GameStates:
+    #Mogelijke statusssen van het spel
+    START, CHSPLAYERS, BOARD, INSTRUCTIONS, WINNINGPLAYER, QUIT = range(6)
+
+class GameStatus:
+    #Hudige status van het spel
+    GAMESTATUS = GameStates.START
+
+    #deze twee variabelen worden alleen gebruikt voor het doorgeven van de keuze bij
+    #chooseplayer naar board. Hierna zal de taak overgenomen worden door
+    # mplogic en de statische variabelen daarin
+    PlayerCount = 0 # < mogelijkheden: 2, 3 of 4 - Telt de werkelijke spelers... Niet de array
+    PlayerObj = [] # < lengte 2, 3 of 4 < speler 1 = playerObj[0], speler 2 = playerObj[1] etc...
+
+    #instructie voor menu instructie link en in-game instructies
+    Instructions = ('Een random persoon begint', 'Als je dezelfde ogen gooit mag je nog een keer', 'regel 3.... etc...')
