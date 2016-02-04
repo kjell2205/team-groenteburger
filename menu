@@ -1,0 +1,62 @@
+
+import pygame
+import staticstate
+
+class GameMenu:
+    def __init__(self, screen, items, bg_color=(212,231,211), font=None, font_size=30,
+                    font_color=(255, 0, 0)):
+        self.screen = screen
+        self.scr_width = self.screen.get_rect().width
+        self.scr_height = self.screen.get_rect().height
+        self.bg_color = bg_color
+        self.clock = pygame.time.Clock()
+        self.items = items
+        self.font = pygame.font.SysFont(font, font_size)
+        self.font_color = font_color
+        self.items = []
+
+        for index, item in enumerate(items):
+            label = self.font.render(item, 1, font_color)
+            width = label.get_rect().width
+            height = label.get_rect().height
+            posx = (self.scr_width / 2) - (width / 2)
+            # t_h: total height of text block
+            t_h = len(items) * height
+            posy = (self.scr_height / 2) - (t_h / 2) + (index * height)
+            self.items.append([item, label, (width, height), (posx, posy)])
+
+    def run(self):
+        global event
+        mainloop = True
+        while mainloop:
+            # Limit frame speed to 50 FPS
+            self.clock.tick(50)
+
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    mainloop = False
+                # CLICK EVENT HANDLERS
+                if event.type == pygame.MOUSEBUTTONUP:
+                        clickX, clickY = pygame.mouse.get_pos()
+                        for name,label,(width,height),(posx,posy) in self.items:
+                            if posx <= clickX and posx+width >= clickX and posy <= clickY and posy+height >= clickY:
+                                if name == "Start":
+                                    staticstate.GameStatus.GAMESTATUS = staticstate.GameStates.CHSPLAYERS
+                                    print("Choose players")
+                                    return
+                                if name == "Spelregels":
+                                    staticstate.GameStatus.GAMESTATUS = staticstate.GameStates.INSTRUCTIONS
+                                    print("Spelregels")
+                                    return
+                                if name == "Quit":
+                                    staticstate.GameStatus.GAMESTATUS = staticstate.GameStates.QUIT
+                                    print("Quit")
+                                    return
+            self.screen.fill(self.bg_color)
+            self.screen.blit(pygame.image.load("images/menu_bg_img.png"), (self.screen.get_rect().width /2 - 275, 0))
+            for name, label, (width, height), (posx, posy) in self.items:
+                self.screen.blit(label, (posx, posy))
+            self.screen.blit(self.font.render("Gabriëlle, Sophie, Ines, Kjell", 1, (30,30,30)) , (20, self.screen.get_rect().height - 30))
+
+
+            pygame.display.flip()
