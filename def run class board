@@ -1,0 +1,7 @@
+def run(self):
+        #hier muziek voor tijdens spel
+        pygame.mixer.music.load('music/beat.mp3')
+        pygame.mixer.music.play(100)
+        mainloop = True
+        while mainloop:
+            self.clock.tick(50)
