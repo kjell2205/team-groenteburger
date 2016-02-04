@@ -1,0 +1,9 @@
+   # instruction knop - Toont over het spel heen de instructies (w:010216)
+                    posx = self.screen.get_rect().width - 60
+                    posy = 10
+                    width = 20
+                    height =20
+                    if posx <= clickX and posx+width >= clickX and posy <= clickY and posy+height >= clickY:
+                        Board.c_instructionspersistent = Board.c
+                        Board.c = -1
+                        return
