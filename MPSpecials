@@ -1,0 +1,19 @@
+import random
+
+class mpspecials:
+    @staticmethod
+    def getspecial(self):
+        specials = [
+            [0, 1, 100, "U ontvangt 100!"],
+            [1, 0, 200, "De bank ontvangt nog geld van u. Betaal 200."],
+            [2, 0, 100, "Uw achtbaan is stuk gegaan. Betaal 100."],
+            [3, 1, 50, "Uw park heeft een prijs gewonnen. U ontvangt 50." ],
+            [4, 0, 150, "Uw park is niet door de inspectie gekomen. Betaal 150"],
+            [5, 1, 50, "U kwam langs start. U ontvangt 50."],
+            [6,0,0,"U bezit dit veld. Ga verder..."],
+            [7,0,0,"U bezit dit veld. Ga verder..."],
+            [8,0,0,"U bezit dit veld. Ga verder..."],
+            [9,0,0,"U bezit dit veld. Ga verder..."],
+            [10,0,0,"U bezit dit veld. Ga verder..."],
+        ]
+        return specials[random.randint(0, 10)]
