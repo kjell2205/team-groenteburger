@@ -1,0 +1,203 @@
+# Hier het spel zelf. Vanuit hier roep je alle nodige zaken aan welke voor het spel nodig zijn
+import pygame
+import staticstate
+import random
+from assets.dice import dice
+from gamelogic.mpgrid import grid
+from gamelogic.mpspecials import mpspecials
+
+
+class Board:
+    gameround = 0
+    playerlist = []
+    currentplayerid = -1
+    # current step in process
+    c = 0
+    # -1 = instructionscreen
+    # 0 = newgame - wait on click start
+    # 1 = newplayer
+    # 2 = wait on start dice
+    c_dice1 = None
+    c_dice2 = None
+    waitms = 0
+    waitdefault = 3000 # wacht 3 seconden voor veranderen positie pion
+    # 3 = delay before moving pion
+    # 4 = move pion
+    # 5 = wait on choice player
+    # 6 = do work bases on choice
+    c_instructionspersistent = 0
+    c_special = None
+
+
+    def __init__(self, screen, playerlist, bg_color=(0,0,0), font=None, font_size=30,
+                    font_color=(255, 255, 255)):
+        self.screen = screen
+        self.scr_width = self.screen.get_rect().width
+        self.scr_height = self.screen.get_rect().height
+        self.bg_color = bg_color
+        self.clock = pygame.time.Clock()
+        self.font = pygame.font.SysFont(font, font_size)
+        self.font_color = font_color
+        self.items = []
+        Board.playerlist = playerlist
+
+    def run(self):
+        #hier muziek voor tijdens spel
+        pygame.mixer.music.load('music/beat.mp3')
+        pygame.mixer.music.play(100)
+        mainloop = True
+        while mainloop:
+            self.clock.tick(50)
+
+            for event in pygame.event.get():
+                if event.type == pygame.MOUSEBUTTONUP: # CLICK ACTION HANDLER
+                    clickX, clickY = pygame.mouse.get_pos()
+
+                    # sluit knop - reset player object etc. Zodat je bij een nieuw spel opnieuw aantal spelers moet kiezen
+                    posx = self.screen.get_rect().width - 30
+                    posy = 10
+                    width = 20
+                    height =20
+                    if posx <= clickX and posx+width >= clickX and posy <= clickY and posy+height >= clickY:
+                        staticstate.GameStatus.GAMESTATUS = staticstate.GameStates.START
+                        #reset data om nieuwe game te starten
+                        staticstate.GameStatus.PlayerObj = []
+                        staticstate.GameStatus.PlayerCount = 0
+                        pygame.mixer.music.fadeout(1000)
+                        print("START")
+                        return
+
+
+                    #close instructions - Sluit knop handler om instructie af te sluiten (je kunt overal op het scherm klikken)
+                    if Board.c == -1:
+                        Board.c = Board.c_instructionspersistent
+                        Board.c_instructionspersistent = 0
+                        return
+                    #start game
+                    if Board.c == 0: # start new game
+                        Board.c = 1
+                    #start dice
+                    if Board.c == 2:
+                        Board.c = 3
+                    #choice
+                    if Board.c == 5:
+                        Board.c = 6
+
+            #LOGIC BOARD STATUS
+            if Board.c == 1: #choose player
+                if Board.currentplayerid < 0:
+                    Board.currentplayerid = random.randint(1, len(Board.playerlist))
+                else:
+                    if Board.currentplayerid <= (len(Board.playerlist)):
+                        Board.currentplayerid += 1
+                    if Board.currentplayerid > (len(Board.playerlist)):
+                        Board.currentplayerid = 1
+                Board.c = 2
+            if Board.c == 3: # display and delay operation (dice)
+                Board.waitms += 50
+                if Board.waitms > Board.waitdefault:
+                    Board.waitms = 0
+                    Board.c = 4
+            if Board.c == 4: # animation and delay (pion)
+                Board.waitms += 50
+                if Board.waitms > Board.waitdefault:
+                    Board.waitms = 0
+
+                    Board.c = 5
+            if Board.c == 6: # Calculate choices player based on cards
+
+                kid, add, ammount, desc = Board.c_special
+                player = Board.playerlist[Board.currentplayerid-1]
+                if add > 0:
+                    player.UpdateGeld(player.GetGeld() + ammount)
+                else:
+                    player.UpdateGeld(player.GetGeld() - ammount)
+                Board.c_special = None
+                c1, i1 = Board.c_dice1
+                c2, i2 = Board.c_dice2
+                Board.c_dice1 = None # reset dices
+                Board.c_dice2 = None
+                if c1 == c2:
+                    Board.c = 2 # nieuwe beurt
+                else:
+                    Board.c = 1 # geen nieuwe beurt, volgende speler
+                    Board.gameround += 1
+                    if Board.gameround == 8:
+                        staticstate.GameStatus.GAMESTATUS = staticstate.GameStates.WINNINGPLAYER
+                        Board.gameround = 0
+                        return
+
+            # VISIBLE BOARD STATUS
+            eventdescription = "Begin een nieuw spel!"
+            self.screen.fill(self.bg_color)
+            self.screen.blit(pygame.image.load("images/Board653x652_factor0.8.png"), (10,46))
+
+            if Board.c == 0: # wait on new game
+                self.screen.blit(self.font.render("Start nieuw spel", 1 , (0,0,0)), (self.screen.get_rect().width /2 - 50, self.screen.get_rect().height /2 - 170))
+
+            if Board.c == 2: # wait op speler. Zodra deze klikt gooi dobbelsteen
+                eventdescription = "Klik om te dobbelen!"
+                self.screen.blit(self.font.render("Speler " + str((Board.currentplayerid)) + " rol dobbelsteen", 1 , (0,0,0)), (self.screen.get_rect().width /2 - 50, self.screen.get_rect().height /2 - 170))
+
+            if Board.c == 3: # resultaat van dobbelsteen...
+                eventdescription = "Dobbelsteen gerold."
+                if Board.c_dice1 is None and Board.c_dice2 is None:
+                    Board.c_dice1 = dice.rolldice(self)
+                    Board.c_dice2 = dice.rolldice(self)
+                    curplayer = Board.playerlist[Board.currentplayerid-1]
+                    curplayer.UpdateTargetPositie(curplayer.GetCurrentPositie() + (Board.c_dice1[0] + Board.c_dice2[0]))
+                    Board.playerlist[Board.currentplayerid-1] = curplayer
+                dice1c, dice1i = Board.c_dice1
+                dice2c, dice2i = Board.c_dice2
+                self.screen.blit(pygame.transform.scale(pygame.image.load(str(dice1i)),(25,25)), (20 , 10))
+                self.screen.blit(pygame.transform.scale(pygame.image.load(str(dice2i)),(25,25)), (50 , 10))
+
+            if Board.c == 4: # wacht op animatie van pion
+                if Board.c_dice1 is not None and Board.c_dice2 is not None:
+                    for player in Board.playerlist:
+                        if player.GetCurrentPositie() < player.GetTargetPositie():
+                            if player.GetCurrentPositie() == 40:
+                                player.UpdateTargetPositie(player.GetTargetPositie() - 40)
+                                player.UpdateCurrentPositie(1)
+                            else:
+                                player.UpdateCurrentPositie(player.GetCurrentPositie() + 1)
+                eventdescription = "Pion beweegt..."
+
+            if Board.c == 5: # speler dient speciale actie keuze te maken
+                eventdescription = "Speler " +str(Board.currentplayerid) + " maak je keuze..."
+                if Board.c_special is None:
+                    special = mpspecials.getspecial(self)
+                    Board.c_special = special
+                kid, add, ammount, desc = Board.c_special
+                self.screen.blit(self.font.render(str(desc), 1 , (0,0,0)), (self.screen.get_rect().width /2 -200, self.screen.get_rect().height /2 - 180))
+                self.screen.blit(self.font.render("OK", 1 , (0,0,0)), (self.screen.get_rect().width /2 - 200, self.screen.get_rect().height /2 - 160))
+
+            # toon geld van huidige speler
+            if Board.c > 1:
+                self.screen.blit(self.font.render("Speler: "+ str(Board.currentplayerid) + " €" + str(Board.playerlist[Board.currentplayerid -1].GetGeld()), 1, (255,255,255)), (self.screen.get_rect().width - 270, 10))
+            # info message top screen:
+            self.screen.blit(self.font.render(eventdescription, 1, (255,255,255)), (85, 10))
+            # instruction button top right
+            self.screen.blit(self.font.render("?", 1, (255,255,255)), (self.screen.get_rect().width -60, 10))
+            # close button top right screen:
+            self.screen.blit(self.font.render("X", 1, (255,255,255)), (self.screen.get_rect().width -30, 10))
+
+            # instructions overlay - Deze als laatste omdat het spel er onder volledig verborgen dient te zijn...
+            if Board.c == -1:
+                pygame.draw.rect(self.screen, (0,0,0), [0, 0, self.screen.get_rect().width, self.screen.get_rect().height])
+                resultarray = []
+                for index, item in enumerate(staticstate.GameStatus.Instructions):
+                    label = self.font.render(item, 1, (255,255,255))
+                    width = label.get_rect().width
+                    height = label.get_rect().height
+                    posx = (self.scr_width / 2) - (width / 2)
+                    # t_h: total height of text block
+                    t_h = len(staticstate.GameStatus.Instructions) * height
+                    posy = (self.scr_height / 2) - (t_h / 2) + (index * height)
+                    resultarray.append([item, label, (width, height), (posx, posy)])
+                for name, label, (width, height), (posx, posy) in resultarray:
+                    self.screen.blit(label, (posx, posy))
+
+            # final
+            pygame.display.flip()
+            # done
