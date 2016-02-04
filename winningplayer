@@ -1,0 +1,59 @@
+import pygame
+import random
+import staticstate
+
+class winningplayer():
+    winningplayertext = None
+    def __init__(self, screen, bg_color=(0,0,0), font=None, font_size=30,
+                    font_color=(255, 255, 255)):
+        self.screen = screen
+        self.scr_width = self.screen.get_rect().width
+        self.scr_height = self.screen.get_rect().height
+        self.bg_color = bg_color
+        self.clock = pygame.time.Clock()
+        self.font = pygame.font.SysFont(font, font_size)
+        self.font_color = font_color
+
+    def run(self):
+        mainloop = True
+        pygame.mixer.music.load('music/beat.mp3')
+        pygame.mixer.music.play(100)
+        while mainloop:
+            # Limit frame speed to 50 FPS
+            self.clock.tick(50)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    mainloop = False
+                if event.type == pygame.MOUSEBUTTONUP:
+                        clickX, clickY = pygame.mouse.get_pos()
+                        posx = self.screen.get_rect().width - 30
+                        posy = 10
+                        width = 20
+                        height =20
+                        if posx <= clickX and posx+width >= clickX and posy <= clickY and posy+height >= clickY:
+                            staticstate.GameStatus.GAMESTATUS = staticstate.GameStates.START
+                            staticstate.GameStatus.PlayerCount = 0
+                            staticstate.GameStatus.PlayerObj = []
+                            winningplayer.winningplayertext = None
+                            pygame.mixer.music.fadeout(1000)
+                            print("START")
+                            return
+
+            winnerSort = staticstate.GameStatus.PlayerObj
+            arr = []
+            for player in staticstate.GameStatus.PlayerObj:
+                arr.append([player.GetNaam(),player.GetGeld()])
+            arr.sort(key=lambda x: x[1], reverse=True)
+
+            self.screen.fill(self.bg_color)
+            count = 1
+            for item in arr:
+                if count == 1:
+                    self.screen.blit(self.font.render("The winner is " + item[0] + "!!!", 1, (255, 255, 255)), (self.screen.get_rect().width / 2 - 100, (30*count)))
+                    count += 1
+                self.screen.blit(self.font.render(str(count-1)+ " " + item[0] + " €"+str(item[1]), 1, (255, 255, 255)), (self.screen.get_rect().width / 2 - 100, (30*count)))
+                count += 1
+
+            self.screen.blit(pygame.image.load("images/winner.gif"), (self.screen.get_rect().width /2 - 250, 200))
+            self.screen.blit(self.font.render("X", 1, (255,255,255)), (self.screen.get_rect().width -30, 10))
+            pygame.display.flip()
